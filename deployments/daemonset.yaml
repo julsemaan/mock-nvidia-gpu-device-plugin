@@ -16,7 +16,7 @@ spec:
         - operator: Exists
       containers:
         - name: plugin
-          image: ghcr.io/example/mock-nvidia-device-plugin:latest
+          image: ghcr.io/<owner>/mock-nvidia-gpu-device-plugin:latest
           imagePullPolicy: IfNotPresent
           args:
             - --resource-name=nvidia.com/gpu

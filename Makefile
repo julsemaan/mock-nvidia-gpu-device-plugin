@@ -1,4 +1,4 @@
-IMAGE ?= ghcr.io/example/mock-nvidia-device-plugin:latest
+IMAGE ?= ghcr.io/<owner>/mock-nvidia-gpu-device-plugin:latest
 
 .PHONY: build test image
 

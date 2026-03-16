@@ -14,7 +14,7 @@ This project provides a Kubernetes device plugin that advertises fake `nvidia.co
 ```bash
 make test
 make build
-docker build -t ghcr.io/example/mock-nvidia-device-plugin:latest .
+docker build -t ghcr.io/<owner>/mock-nvidia-gpu-device-plugin:latest .
 ```
 
 ## Configuration
@@ -29,7 +29,7 @@ The binary accepts flags or environment variables:
 
 ## Deploy
 
-1. Build and push the image.
+1. Push to `main` or create a `v*` tag to publish via GitHub Actions, or build and push manually.
 2. Update the image reference in `deployments/daemonset.yaml`.
 3. Apply the DaemonSet:
 
