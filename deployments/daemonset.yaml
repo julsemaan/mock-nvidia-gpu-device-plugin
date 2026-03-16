@@ -12,11 +12,18 @@ spec:
       labels:
         app: mock-nvidia-device-plugin
     spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: node-role.kubernetes.io/control-plane
+                    operator: DoesNotExist
       tolerations:
         - operator: Exists
       containers:
         - name: plugin
-          image: ghcr.io/<owner>/mock-nvidia-gpu-device-plugin:latest
+          image: ghcr.io/julsemaan/mock-nvidia-gpu-device-plugin:latest
           imagePullPolicy: IfNotPresent
           args:
             - --resource-name=nvidia.com/gpu

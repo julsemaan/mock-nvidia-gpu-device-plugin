@@ -4,6 +4,8 @@ import (
 	"context"
 	"io"
 	"log/slog"
+	"os"
+	"path/filepath"
 	"strconv"
 	"testing"
 
@@ -74,5 +76,33 @@ func TestAllocateRejectsUnknownDevice(t *testing.T) {
 	})
 	if err == nil {
 		t.Fatal("expected allocate to reject unknown device ID")
+	}
+}
+
+func TestNewDefaultsKubeletSocketToPluginDir(t *testing.T) {
+	dir := t.TempDir()
+	server := New(Config{
+		ResourceName: "nvidia.com/gpu",
+		DeviceCount:  1,
+		DevicePrefix: "mock-gpu",
+		PluginDir:    dir,
+		SocketName:   "mock.sock",
+	}, slog.New(slog.NewTextHandler(io.Discard, nil)))
+
+	want := filepath.Join(dir, "kubelet.sock")
+	if server.kubeletSocket != want {
+		t.Fatalf("expected kubelet socket %q, got %q", want, server.kubeletSocket)
+	}
+}
+
+func TestValidateSocketPathRejectsNonSocket(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "not-a-socket")
+	if err := os.WriteFile(path, []byte("x"), 0o644); err != nil {
+		t.Fatalf("write test file: %v", err)
+	}
+
+	err := validateSocketPath(path)
+	if err == nil {
+		t.Fatal("expected validateSocketPath to reject non-socket")
 	}
 }

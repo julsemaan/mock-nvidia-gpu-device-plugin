@@ -26,6 +26,7 @@ The binary accepts flags or environment variables:
 - `--device-prefix` or `DEVICE_PREFIX` (default `mock-gpu`)
 - `--plugin-dir` or `PLUGIN_DIR` (default `/var/lib/kubelet/device-plugins`)
 - `--socket-name` or `SOCKET_NAME` (default `mock-nvidia-gpu.sock`)
+- `--kubelet-socket` or `KUBELET_SOCKET` (default `<plugin-dir>/kubelet.sock`)
 
 ## Deploy
 
@@ -49,6 +50,8 @@ kubectl get nodes -o custom-columns=NAME:.metadata.name,GPUS:.status.allocatable
 kubectl apply -f deployments/example-pod.yaml
 kubectl logs -f pod/mock-gpu-consumer
 ```
+
+If registration keeps retrying with `dial kubelet socket: context deadline exceeded`, verify the node's kubelet actually exposes its device plugin socket at `/var/lib/kubelet/device-plugins/kubelet.sock`. Some distributions use a different kubelet root directory; in that case, set `KUBELET_SOCKET` to the host path mounted into the container.
 
 ## Limitations
 

@@ -29,11 +29,12 @@ const (
 )
 
 type Config struct {
-	ResourceName string
-	DeviceCount  int
-	DevicePrefix string
-	PluginDir    string
-	SocketName   string
+	ResourceName  string
+	DeviceCount   int
+	DevicePrefix  string
+	PluginDir     string
+	SocketName    string
+	KubeletSocket string
 }
 
 type Server struct {
@@ -58,11 +59,16 @@ func New(cfg Config, logger *slog.Logger) *Server {
 		deviceIDs[device.ID] = struct{}{}
 	}
 
+	kubeletSocket := cfg.KubeletSocket
+	if kubeletSocket == "" {
+		kubeletSocket = filepath.Join(cfg.PluginDir, filepath.Base(pluginapi.KubeletSocket))
+	}
+
 	return &Server{
 		cfg:           cfg,
 		logger:        logger.With("component", "mock-device-plugin"),
 		socketPath:    filepath.Join(cfg.PluginDir, cfg.SocketName),
-		kubeletSocket: filepath.Join(cfg.PluginDir, pluginapi.KubeletSocket),
+		kubeletSocket: kubeletSocket,
 		devices:       devices,
 		deviceIDs:     deviceIDs,
 	}
@@ -244,9 +250,13 @@ func (s *Server) registerOnce(ctx context.Context, request *pluginapi.RegisterRe
 	dialCtx, cancel := context.WithTimeout(ctx, kubeletDialTimeout)
 	defer cancel()
 
+	if err := validateSocketPath(s.kubeletSocket); err != nil {
+		return fmt.Errorf("kubelet socket check failed: %w", err)
+	}
+
 	conn, err := grpc.DialContext(
 		dialCtx,
-		s.kubeletSocket,
+		unixTarget(s.kubeletSocket),
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 		grpc.WithContextDialer(unixDialer),
 		grpc.WithBlock(),
@@ -359,5 +369,26 @@ func samePath(a, b string) bool {
 }
 
 func unixDialer(ctx context.Context, target string) (net.Conn, error) {
+	if strings.HasPrefix(target, "unix://") {
+		target = strings.TrimPrefix(target, "unix://")
+	}
+	if strings.HasPrefix(target, "unix:") {
+		target = strings.TrimPrefix(target, "unix:")
+	}
 	return (&net.Dialer{}).DialContext(ctx, "unix", target)
+}
+
+func validateSocketPath(path string) error {
+	info, err := os.Stat(path)
+	if err != nil {
+		return err
+	}
+	if info.Mode()&os.ModeSocket == 0 {
+		return fmt.Errorf("%s exists but is not a unix socket (mode=%s)", path, info.Mode())
+	}
+	return nil
+}
+
+func unixTarget(path string) string {
+	return "unix://" + path
 }

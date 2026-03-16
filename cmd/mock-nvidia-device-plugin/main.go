@@ -43,6 +43,7 @@ func parseConfig() (plugin.Config, error) {
 	flag.StringVar(&cfg.DevicePrefix, "device-prefix", envString("DEVICE_PREFIX", "mock-gpu"), "prefix used when generating fake device IDs")
 	flag.StringVar(&cfg.PluginDir, "plugin-dir", envString("PLUGIN_DIR", plugin.DefaultPluginDir), "kubelet device plugin directory on the host")
 	flag.StringVar(&cfg.SocketName, "socket-name", envString("SOCKET_NAME", "mock-nvidia-gpu.sock"), "unix socket filename used by the plugin")
+	flag.StringVar(&cfg.KubeletSocket, "kubelet-socket", envString("KUBELET_SOCKET", ""), "full path to the kubelet registration socket; defaults to <plugin-dir>/kubelet.sock")
 	flag.Parse()
 
 	if cfg.ResourceName == "" {
@@ -56,6 +57,9 @@ func parseConfig() (plugin.Config, error) {
 	}
 	if cfg.SocketName == "" {
 		return cfg, fmt.Errorf("socket-name must not be empty")
+	}
+	if cfg.KubeletSocket != "" && cfg.KubeletSocket[0] != '/' {
+		return cfg, fmt.Errorf("kubelet-socket must be an absolute path")
 	}
 	if cfg.DeviceCount < 0 {
 		return cfg, fmt.Errorf("device-count must be zero or greater")
