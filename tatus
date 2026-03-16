@@ -1,0 +1,241 @@
+Name:               test-mock-gpu-control-plane
+Roles:              control-plane
+Labels:             beta.kubernetes.io/arch=amd64
+                    beta.kubernetes.io/os=linux
+                    kubernetes.io/arch=amd64
+                    kubernetes.io/hostname=test-mock-gpu-control-plane
+                    kubernetes.io/os=linux
+                    node-role.kubernetes.io/control-plane=
+                    node.kubernetes.io/exclude-from-external-load-balancers=
+Annotations:        node.alpha.kubernetes.io/ttl: 0
+                    volumes.kubernetes.io/controller-managed-attach-detach: true
+CreationTimestamp:  Mon, 16 Mar 2026 08:52:42 -0400
+Taints:             node-role.kubernetes.io/control-plane:NoSchedule
+Unschedulable:      false
+Lease:
+  HolderIdentity:  test-mock-gpu-control-plane
+  AcquireTime:     <unset>
+  RenewTime:       Mon, 16 Mar 2026 09:36:26 -0400
+Conditions:
+  Type             Status  LastHeartbeatTime                 LastTransitionTime                Reason                       Message
+  ----             ------  -----------------                 ------------------                ------                       -------
+  MemoryPressure   False   Mon, 16 Mar 2026 09:35:27 -0400   Mon, 16 Mar 2026 08:52:41 -0400   KubeletHasSufficientMemory   kubelet has sufficient memory available
+  DiskPressure     False   Mon, 16 Mar 2026 09:35:27 -0400   Mon, 16 Mar 2026 08:52:41 -0400   KubeletHasNoDiskPressure     kubelet has no disk pressure
+  PIDPressure      False   Mon, 16 Mar 2026 09:35:27 -0400   Mon, 16 Mar 2026 08:52:41 -0400   KubeletHasSufficientPID      kubelet has sufficient PID available
+  Ready            True    Mon, 16 Mar 2026 09:35:27 -0400   Mon, 16 Mar 2026 08:53:03 -0400   KubeletReady                 kubelet is posting ready status
+Addresses:
+  InternalIP:  172.18.0.5
+  Hostname:    test-mock-gpu-control-plane
+Capacity:
+  cpu:                14
+  ephemeral-storage:  490048472Ki
+  hugepages-1Gi:      0
+  hugepages-2Mi:      0
+  memory:             32300892Ki
+  pods:               110
+Allocatable:
+  cpu:                14
+  ephemeral-storage:  490048472Ki
+  hugepages-1Gi:      0
+  hugepages-2Mi:      0
+  memory:             32300892Ki
+  pods:               110
+System Info:
+  Machine ID:                 f0809fcc87194eeb9038b9cdeb097007
+  System UUID:                e3a1e1c0-e214-4dbd-8183-831d2ee3c4ef
+  Boot ID:                    b22df400-93c4-4ae0-b77f-9d827fdba7f1
+  Kernel Version:             6.17.0-14-generic
+  OS Image:                   Debian GNU/Linux 12 (bookworm)
+  Operating System:           linux
+  Architecture:               amd64
+  Container Runtime Version:  containerd://2.2.0
+  Kubelet Version:            v1.35.0
+  Kube-Proxy Version:         
+PodCIDR:                      10.244.0.0/24
+PodCIDRs:                     10.244.0.0/24
+ProviderID:                   kind://docker/test-mock-gpu/test-mock-gpu-control-plane
+Non-terminated Pods:          (9 in total)
+  Namespace                   Name                                                   CPU Requests  CPU Limits  Memory Requests  Memory Limits  Age
+  ---------                   ----                                                   ------------  ----------  ---------------  -------------  ---
+  kube-system                 coredns-7d764666f9-89zw8                               100m (0%)     0 (0%)      70Mi (0%)        170Mi (0%)     43m
+  kube-system                 coredns-7d764666f9-gjgjs                               100m (0%)     0 (0%)      70Mi (0%)        170Mi (0%)     43m
+  kube-system                 etcd-test-mock-gpu-control-plane                       100m (0%)     0 (0%)      100Mi (0%)       0 (0%)         43m
+  kube-system                 kindnet-s2m8x                                          100m (0%)     100m (0%)   50Mi (0%)        50Mi (0%)      43m
+  kube-system                 kube-apiserver-test-mock-gpu-control-plane             250m (1%)     0 (0%)      0 (0%)           0 (0%)         43m
+  kube-system                 kube-controller-manager-test-mock-gpu-control-plane    200m (1%)     0 (0%)      0 (0%)           0 (0%)         43m
+  kube-system                 kube-proxy-ldh5b                                       0 (0%)        0 (0%)      0 (0%)           0 (0%)         43m
+  kube-system                 kube-scheduler-test-mock-gpu-control-plane             100m (0%)     0 (0%)      0 (0%)           0 (0%)         43m
+  local-path-storage          local-path-provisioner-67b8995b4b-x4fd5                0 (0%)        0 (0%)      0 (0%)           0 (0%)         43m
+Allocated resources:
+  (Total limits may be over 100 percent, i.e., overcommitted.)
+  Resource           Requests    Limits
+  --------           --------    ------
+  cpu                950m (6%)   100m (0%)
+  memory             290Mi (0%)  390Mi (1%)
+  ephemeral-storage  0 (0%)      0 (0%)
+  hugepages-1Gi      0 (0%)      0 (0%)
+  hugepages-2Mi      0 (0%)      0 (0%)
+Events:
+  Type    Reason          Age   From             Message
+  ----    ------          ----  ----             -------
+  Normal  RegisteredNode  43m   node-controller  Node test-mock-gpu-control-plane event: Registered Node test-mock-gpu-control-plane in Controller
+
+
+Name:               test-mock-gpu-worker
+Roles:              <none>
+Labels:             beta.kubernetes.io/arch=amd64
+                    beta.kubernetes.io/os=linux
+                    kubernetes.io/arch=amd64
+                    kubernetes.io/hostname=test-mock-gpu-worker
+                    kubernetes.io/os=linux
+Annotations:        node.alpha.kubernetes.io/ttl: 0
+                    volumes.kubernetes.io/controller-managed-attach-detach: true
+CreationTimestamp:  Mon, 16 Mar 2026 08:52:56 -0400
+Taints:             <none>
+Unschedulable:      false
+Lease:
+  HolderIdentity:  test-mock-gpu-worker
+  AcquireTime:     <unset>
+  RenewTime:       Mon, 16 Mar 2026 09:36:29 -0400
+Conditions:
+  Type             Status  LastHeartbeatTime                 LastTransitionTime                Reason                       Message
+  ----             ------  -----------------                 ------------------                ------                       -------
+  MemoryPressure   False   Mon, 16 Mar 2026 09:36:00 -0400   Mon, 16 Mar 2026 08:52:56 -0400   KubeletHasSufficientMemory   kubelet has sufficient memory available
+  DiskPressure     False   Mon, 16 Mar 2026 09:36:00 -0400   Mon, 16 Mar 2026 08:52:56 -0400   KubeletHasNoDiskPressure     kubelet has no disk pressure
+  PIDPressure      False   Mon, 16 Mar 2026 09:36:00 -0400   Mon, 16 Mar 2026 08:52:56 -0400   KubeletHasSufficientPID      kubelet has sufficient PID available
+  Ready            True    Mon, 16 Mar 2026 09:36:00 -0400   Mon, 16 Mar 2026 08:53:09 -0400   KubeletReady                 kubelet is posting ready status
+Addresses:
+  InternalIP:  172.18.0.4
+  Hostname:    test-mock-gpu-worker
+Capacity:
+  cpu:                14
+  ephemeral-storage:  490048472Ki
+  hugepages-1Gi:      0
+  hugepages-2Mi:      0
+  memory:             32300892Ki
+  nvidia.com/gpu:     1
+  pods:               110
+Allocatable:
+  cpu:                14
+  ephemeral-storage:  490048472Ki
+  hugepages-1Gi:      0
+  hugepages-2Mi:      0
+  memory:             32300892Ki
+  nvidia.com/gpu:     1
+  pods:               110
+System Info:
+  Machine ID:                 289dd053206645818a94160942f68ad9
+  System UUID:                daa9258e-e56a-47c3-b17b-0d2e169383fd
+  Boot ID:                    b22df400-93c4-4ae0-b77f-9d827fdba7f1
+  Kernel Version:             6.17.0-14-generic
+  OS Image:                   Debian GNU/Linux 12 (bookworm)
+  Operating System:           linux
+  Architecture:               amd64
+  Container Runtime Version:  containerd://2.2.0
+  Kubelet Version:            v1.35.0
+  Kube-Proxy Version:         
+PodCIDR:                      10.244.1.0/24
+PodCIDRs:                     10.244.1.0/24
+ProviderID:                   kind://docker/test-mock-gpu/test-mock-gpu-worker
+Non-terminated Pods:          (5 in total)
+  Namespace                   Name                                              CPU Requests  CPU Limits  Memory Requests  Memory Limits  Age
+  ---------                   ----                                              ------------  ----------  ---------------  -------------  ---
+  kube-system                 kindnet-hfzgp                                     100m (0%)     100m (0%)   50Mi (0%)        50Mi (0%)      43m
+  kube-system                 kube-proxy-7h6xg                                  0 (0%)        0 (0%)      0 (0%)           0 (0%)         43m
+  kube-system                 mock-nvidia-device-plugin-52dld                   25m (0%)      100m (0%)   32Mi (0%)        128Mi (0%)     27m
+  kubex                       prometheus-kube-state-metrics-589549fffb-lgwpx    0 (0%)        0 (0%)      0 (0%)           0 (0%)         50s
+  kubex                       prometheus-prometheus-node-exporter-chrsw         0 (0%)        0 (0%)      0 (0%)           0 (0%)         50s
+Allocated resources:
+  (Total limits may be over 100 percent, i.e., overcommitted.)
+  Resource           Requests   Limits
+  --------           --------   ------
+  cpu                125m (0%)  200m (1%)
+  memory             82Mi (0%)  178Mi (0%)
+  ephemeral-storage  0 (0%)     0 (0%)
+  hugepages-1Gi      0 (0%)     0 (0%)
+  hugepages-2Mi      0 (0%)     0 (0%)
+  nvidia.com/gpu     0          0
+Events:
+  Type    Reason          Age   From             Message
+  ----    ------          ----  ----             -------
+  Normal  RegisteredNode  43m   node-controller  Node test-mock-gpu-worker event: Registered Node test-mock-gpu-worker in Controller
+
+
+Name:               test-mock-gpu-worker2
+Roles:              <none>
+Labels:             beta.kubernetes.io/arch=amd64
+                    beta.kubernetes.io/os=linux
+                    kubernetes.io/arch=amd64
+                    kubernetes.io/hostname=test-mock-gpu-worker2
+                    kubernetes.io/os=linux
+Annotations:        node.alpha.kubernetes.io/ttl: 0
+                    volumes.kubernetes.io/controller-managed-attach-detach: true
+CreationTimestamp:  Mon, 16 Mar 2026 08:52:56 -0400
+Taints:             <none>
+Unschedulable:      false
+Lease:
+  HolderIdentity:  test-mock-gpu-worker2
+  AcquireTime:     <unset>
+  RenewTime:       Mon, 16 Mar 2026 09:36:29 -0400
+Conditions:
+  Type             Status  LastHeartbeatTime                 LastTransitionTime                Reason                       Message
+  ----             ------  -----------------                 ------------------                ------                       -------
+  MemoryPressure   False   Mon, 16 Mar 2026 09:36:26 -0400   Mon, 16 Mar 2026 08:52:56 -0400   KubeletHasSufficientMemory   kubelet has sufficient memory available
+  DiskPressure     False   Mon, 16 Mar 2026 09:36:26 -0400   Mon, 16 Mar 2026 08:52:56 -0400   KubeletHasNoDiskPressure     kubelet has no disk pressure
+  PIDPressure      False   Mon, 16 Mar 2026 09:36:26 -0400   Mon, 16 Mar 2026 08:52:56 -0400   KubeletHasSufficientPID      kubelet has sufficient PID available
+  Ready            True    Mon, 16 Mar 2026 09:36:26 -0400   Mon, 16 Mar 2026 08:53:09 -0400   KubeletReady                 kubelet is posting ready status
+Addresses:
+  InternalIP:  172.18.0.3
+  Hostname:    test-mock-gpu-worker2
+Capacity:
+  cpu:                14
+  ephemeral-storage:  490048472Ki
+  hugepages-1Gi:      0
+  hugepages-2Mi:      0
+  memory:             32300892Ki
+  nvidia.com/gpu:     1
+  pods:               110
+Allocatable:
+  cpu:                14
+  ephemeral-storage:  490048472Ki
+  hugepages-1Gi:      0
+  hugepages-2Mi:      0
+  memory:             32300892Ki
+  nvidia.com/gpu:     1
+  pods:               110
+System Info:
+  Machine ID:                 55dcc0bd4ba545c99e80eb00bde08f7d
+  System UUID:                a3fcef42-9898-4201-b945-4f2a20503646
+  Boot ID:                    b22df400-93c4-4ae0-b77f-9d827fdba7f1
+  Kernel Version:             6.17.0-14-generic
+  OS Image:                   Debian GNU/Linux 12 (bookworm)
+  Operating System:           linux
+  Architecture:               amd64
+  Container Runtime Version:  containerd://2.2.0
+  Kubelet Version:            v1.35.0
+  Kube-Proxy Version:         
+PodCIDR:                      10.244.2.0/24
+PodCIDRs:                     10.244.2.0/24
+ProviderID:                   kind://docker/test-mock-gpu/test-mock-gpu-worker2
+Non-terminated Pods:          (5 in total)
+  Namespace                   Name                                         CPU Requests  CPU Limits  Memory Requests  Memory Limits  Age
+  ---------                   ----                                         ------------  ----------  ---------------  -------------  ---
+  kube-system                 kindnet-dzflw                                100m (0%)     100m (0%)   50Mi (0%)        50Mi (0%)      43m
+  kube-system                 kube-proxy-rs2pn                             0 (0%)        0 (0%)      0 (0%)           0 (0%)         43m
+  kube-system                 mock-nvidia-device-plugin-v6nzc              25m (0%)      100m (0%)   32Mi (0%)        128Mi (0%)     27m
+  kubex                       kubex-prometheus-server-5589ffb467-z5pv6     0 (0%)        0 (0%)      0 (0%)           0 (0%)         50s
+  kubex                       prometheus-prometheus-node-exporter-mjqpq    0 (0%)        0 (0%)      0 (0%)           0 (0%)         50s
+Allocated resources:
+  (Total limits may be over 100 percent, i.e., overcommitted.)
+  Resource           Requests   Limits
+  --------           --------   ------
+  cpu                125m (0%)  200m (1%)
+  memory             82Mi (0%)  178Mi (0%)
+  ephemeral-storage  0 (0%)     0 (0%)
+  hugepages-1Gi      0 (0%)     0 (0%)
+  hugepages-2Mi      0 (0%)     0 (0%)
+  nvidia.com/gpu     0          0
+Events:
+  Type    Reason          Age   From             Message
+  ----    ------          ----  ----             -------
+  Normal  RegisteredNode  43m   node-controller  Node test-mock-gpu-worker2 event: Registered Node test-mock-gpu-worker2 in Controller

@@ -2,6 +2,7 @@ package plugin
 
 import (
 	"context"
+	"encoding/json"
 	"io"
 	"log/slog"
 	"os"
@@ -104,5 +105,47 @@ func TestValidateSocketPathRejectsNonSocket(t *testing.T) {
 	err := validateSocketPath(path)
 	if err == nil {
 		t.Fatal("expected validateSocketPath to reject non-socket")
+	}
+}
+
+func TestMakeNodeLabelPatch(t *testing.T) {
+	patch, err := makeNodeLabelPatch("nvidia.com/gpu.present", "true")
+	if err != nil {
+		t.Fatalf("makeNodeLabelPatch returned error: %v", err)
+	}
+
+	var decoded map[string]map[string]map[string]string
+	if err := json.Unmarshal(patch, &decoded); err != nil {
+		t.Fatalf("unmarshal patch: %v", err)
+	}
+
+	if got := decoded["metadata"]["labels"]["nvidia.com/gpu.present"]; got != "true" {
+		t.Fatalf("expected node label patch value %q, got %q", "true", got)
+	}
+}
+
+func TestEnsureNodeLabelUsesConfiguredLabeler(t *testing.T) {
+	server := New(Config{
+		ResourceName:   "nvidia.com/gpu",
+		DeviceCount:    1,
+		DevicePrefix:   "mock-gpu",
+		PluginDir:      t.TempDir(),
+		SocketName:     "mock.sock",
+		NodeName:       "worker-1",
+		NodeLabelKey:   "nvidia.com/gpu.present",
+		NodeLabelValue: "true",
+	}, slog.New(slog.NewTextHandler(io.Discard, nil)))
+
+	called := false
+	server.labelNode = func(context.Context) error {
+		called = true
+		return nil
+	}
+
+	if err := server.ensureNodeLabel(context.Background()); err != nil {
+		t.Fatalf("ensureNodeLabel returned error: %v", err)
+	}
+	if !called {
+		t.Fatal("expected ensureNodeLabel to invoke the node labeler")
 	}
 }

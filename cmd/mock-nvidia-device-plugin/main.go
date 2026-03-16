@@ -44,6 +44,9 @@ func parseConfig() (plugin.Config, error) {
 	flag.StringVar(&cfg.PluginDir, "plugin-dir", envString("PLUGIN_DIR", plugin.DefaultPluginDir), "kubelet device plugin directory on the host")
 	flag.StringVar(&cfg.SocketName, "socket-name", envString("SOCKET_NAME", "mock-nvidia-gpu.sock"), "unix socket filename used by the plugin")
 	flag.StringVar(&cfg.KubeletSocket, "kubelet-socket", envString("KUBELET_SOCKET", ""), "full path to the kubelet registration socket; defaults to <plugin-dir>/kubelet.sock")
+	flag.StringVar(&cfg.NodeName, "node-name", envString("NODE_NAME", ""), "kubernetes node name to label for GPU presence")
+	flag.StringVar(&cfg.NodeLabelKey, "node-label-key", envString("NODE_LABEL_KEY", "nvidia.com/gpu.present"), "node label key to set when the plugin is active")
+	flag.StringVar(&cfg.NodeLabelValue, "node-label-value", envString("NODE_LABEL_VALUE", "true"), "node label value to set when the plugin is active")
 	flag.Parse()
 
 	if cfg.ResourceName == "" {
@@ -60,6 +63,9 @@ func parseConfig() (plugin.Config, error) {
 	}
 	if cfg.KubeletSocket != "" && cfg.KubeletSocket[0] != '/' {
 		return cfg, fmt.Errorf("kubelet-socket must be an absolute path")
+	}
+	if cfg.NodeLabelValue == "" {
+		return cfg, fmt.Errorf("node-label-value must not be empty")
 	}
 	if cfg.DeviceCount < 0 {
 		return cfg, fmt.Errorf("device-count must be zero or greater")

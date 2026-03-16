@@ -4,6 +4,8 @@ metadata:
   name: mock-gpu-consumer
 spec:
   restartPolicy: Never
+  nodeSelector:
+    nvidia.com/gpu.present: "true"
   containers:
     - name: app
       image: busybox:1.36

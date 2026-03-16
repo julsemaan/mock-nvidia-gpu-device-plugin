@@ -2,6 +2,7 @@ package plugin
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"log/slog"
@@ -17,6 +18,10 @@ import (
 	"github.com/fsnotify/fsnotify"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/types"
+	"k8s.io/client-go/kubernetes"
+	"k8s.io/client-go/rest"
 	pluginapi "k8s.io/kubelet/pkg/apis/deviceplugin/v1beta1"
 )
 
@@ -29,12 +34,15 @@ const (
 )
 
 type Config struct {
-	ResourceName  string
-	DeviceCount   int
-	DevicePrefix  string
-	PluginDir     string
-	SocketName    string
-	KubeletSocket string
+	ResourceName   string
+	DeviceCount    int
+	DevicePrefix   string
+	PluginDir      string
+	SocketName     string
+	KubeletSocket  string
+	NodeName       string
+	NodeLabelKey   string
+	NodeLabelValue string
 }
 
 type Server struct {
@@ -50,6 +58,7 @@ type Server struct {
 	deviceIDs  map[string]struct{}
 	grpcServer *grpc.Server
 	listener   net.Listener
+	labelNode  func(context.Context) error
 }
 
 func New(cfg Config, logger *slog.Logger) *Server {
@@ -71,6 +80,7 @@ func New(cfg Config, logger *slog.Logger) *Server {
 		kubeletSocket: kubeletSocket,
 		devices:       devices,
 		deviceIDs:     deviceIDs,
+		labelNode:     makeNodeLabeler(cfg),
 	}
 }
 
@@ -81,6 +91,14 @@ func (s *Server) Run(ctx context.Context) error {
 		}
 
 		if err := s.register(ctx); err != nil {
+			s.stop()
+			if errors.Is(err, context.Canceled) {
+				return nil
+			}
+			return err
+		}
+
+		if err := s.ensureNodeLabel(ctx); err != nil {
 			s.stop()
 			if errors.Is(err, context.Canceled) {
 				return nil
@@ -391,4 +409,54 @@ func validateSocketPath(path string) error {
 
 func unixTarget(path string) string {
 	return "unix://" + path
+}
+
+func (s *Server) ensureNodeLabel(ctx context.Context) error {
+	if s.labelNode == nil {
+		return nil
+	}
+	if err := s.labelNode(ctx); err != nil {
+		return fmt.Errorf("label node %q with %s=%q: %w", s.cfg.NodeName, s.cfg.NodeLabelKey, s.cfg.NodeLabelValue, err)
+	}
+	s.logger.Info("ensured node label", "node", s.cfg.NodeName, "label", s.cfg.NodeLabelKey, "value", s.cfg.NodeLabelValue)
+	return nil
+}
+
+func makeNodeLabeler(cfg Config) func(context.Context) error {
+	if cfg.NodeName == "" || cfg.NodeLabelKey == "" {
+		return nil
+	}
+
+	return func(ctx context.Context) error {
+		restConfig, err := rest.InClusterConfig()
+		if err != nil {
+			return fmt.Errorf("build in-cluster config: %w", err)
+		}
+
+		clientset, err := kubernetes.NewForConfig(restConfig)
+		if err != nil {
+			return fmt.Errorf("create kubernetes client: %w", err)
+		}
+
+		patch, err := makeNodeLabelPatch(cfg.NodeLabelKey, cfg.NodeLabelValue)
+		if err != nil {
+			return err
+		}
+
+		_, err = clientset.CoreV1().Nodes().Patch(ctx, cfg.NodeName, types.MergePatchType, patch, metav1.PatchOptions{})
+		if err != nil {
+			return fmt.Errorf("patch node: %w", err)
+		}
+		return nil
+	}
+}
+
+func makeNodeLabelPatch(key, value string) ([]byte, error) {
+	return json.Marshal(map[string]map[string]map[string]string{
+		"metadata": {
+			"labels": {
+				key: value,
+			},
+		},
+	})
 }
