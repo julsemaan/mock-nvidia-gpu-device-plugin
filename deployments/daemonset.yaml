@@ -24,10 +24,10 @@ spec:
       containers:
         - name: plugin
           image: ghcr.io/julsemaan/mock-nvidia-gpu-device-plugin:latest
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
           args:
             - --resource-name=nvidia.com/gpu
-            - --device-count=8
+            - --device-count=1
           securityContext:
             privileged: true
             readOnlyRootFilesystem: true
