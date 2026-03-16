@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: mock-nvidia-device-plugin
+  namespace: kube-system
+spec:
+  selector:
+    matchLabels:
+      app: mock-nvidia-device-plugin
+  template:
+    metadata:
+      labels:
+        app: mock-nvidia-device-plugin
+    spec:
+      tolerations:
+        - operator: Exists
+      containers:
+        - name: plugin
+          image: ghcr.io/example/mock-nvidia-device-plugin:latest
+          imagePullPolicy: IfNotPresent
+          args:
+            - --resource-name=nvidia.com/gpu
+            - --device-count=8
+          securityContext:
+            privileged: true
+            readOnlyRootFilesystem: true
+          resources:
+            requests:
+              cpu: 25m
+              memory: 32Mi
+            limits:
+              cpu: 100m
+              memory: 128Mi
+          volumeMounts:
+            - name: device-plugin
+              mountPath: /var/lib/kubelet/device-plugins
+      volumes:
+        - name: device-plugin
+          hostPath:
+            path: /var/lib/kubelet/device-plugins
+            type: Directory

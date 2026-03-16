@@ -1,0 +1,57 @@
+# Mock NVIDIA GPU Device Plugin
+
+This project provides a Kubernetes device plugin that advertises fake `nvidia.com/gpu` resources for scheduling and integration tests. It does not create real GPU device nodes or provide CUDA access; it only makes kubelet believe GPUs are allocatable and injects predictable environment variables during `Allocate`.
+
+## What it does
+
+- Exposes a configurable number of healthy mock GPUs on every node where the DaemonSet runs.
+- Registers the standard `nvidia.com/gpu` extended resource by default.
+- Returns stable fake device IDs like `mock-gpu-0` and sets `NVIDIA_VISIBLE_DEVICES` for requested containers.
+- Re-registers with kubelet after kubelet socket recreation.
+
+## Build and test
+
+```bash
+make test
+make build
+docker build -t ghcr.io/example/mock-nvidia-device-plugin:latest .
+```
+
+## Configuration
+
+The binary accepts flags or environment variables:
+
+- `--resource-name` or `RESOURCE_NAME` (default `nvidia.com/gpu`)
+- `--device-count` or `DEVICE_COUNT` (default `8`)
+- `--device-prefix` or `DEVICE_PREFIX` (default `mock-gpu`)
+- `--plugin-dir` or `PLUGIN_DIR` (default `/var/lib/kubelet/device-plugins`)
+- `--socket-name` or `SOCKET_NAME` (default `mock-nvidia-gpu.sock`)
+
+## Deploy
+
+1. Build and push the image.
+2. Update the image reference in `deployments/daemonset.yaml`.
+3. Apply the DaemonSet:
+
+```bash
+kubectl apply -f deployments/daemonset.yaml
+```
+
+4. Confirm the resource is present on a node:
+
+```bash
+kubectl get nodes -o custom-columns=NAME:.metadata.name,GPUS:.status.allocatable.nvidia\\.com/gpu
+```
+
+5. Run the sample consumer pod:
+
+```bash
+kubectl apply -f deployments/example-pod.yaml
+kubectl logs -f pod/mock-gpu-consumer
+```
+
+## Limitations
+
+- No `/dev/nvidia*` device files are mounted into containers.
+- No GPU runtime hooks, CUDA libraries, or MIG behavior are provided.
+- Workloads that require a real NVIDIA driver stack will still fail.
